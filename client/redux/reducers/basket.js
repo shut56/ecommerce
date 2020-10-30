@@ -3,9 +3,9 @@ const UPDATE_AMOUNT = 'UPDATE_AMOUNT'
 const SET_SORT = 'SET_SORT'
 
 const initialState = {
-  cart: {},
+  cart: [],
   totalPrice: 0,
-  count: 0
+  totalAmount: 0
 }
 
 const setCount = (product) => {
@@ -18,18 +18,15 @@ const setCount = (product) => {
 
 const sumOfItems = (cart) => {
   if (typeof cart !== 'undefined') {
-    return Object.keys(cart).reduce((acc, rec) => acc + cart[rec].count, 0)
+    return cart.reduce((acc, rec) => acc + rec.count, 0)
   }
   return 0
 }
 
 const globalCountPrice = (cart) => {
-  const count = Object.keys(cart).reduce((acc, rec) => acc + cart[rec].count, 0)
-  const totalPrice = Object.keys(cart).reduce(
-    (acc, rec) => acc + cart[rec].price * cart[rec].count,
-    0
-  )
-  return { count, totalPrice }
+  const totalAmount = cart.reduce((acc, rec) => acc + rec.count, 0)
+  const totalPrice = cart.reduce((acc, rec) => acc + rec.price * rec.count, 0)
+  return { totalAmount, totalPrice }
 }
 
 export default (state = initialState, action) => {
@@ -37,41 +34,42 @@ export default (state = initialState, action) => {
     case ADD_TO_CART: {
       return {
         ...state,
-        cart: {
+        cart: [
           ...state.cart,
-          [action.item.id]: {
+          {
             ...action.item,
-            count: setCount(state.cart[action.item.id])
+            count: setCount(state.cart.find((item) => item.id === action.item.id))
           }
-        },
+        ],
         totalPrice: state.totalPrice + action.item.price,
         count: sumOfItems(state.cart) + 1
       }
     }
     case UPDATE_AMOUNT: {
-      const newAmount = state.cart[action.id].count + action.payload
-      const updatedCart = Object.keys(state.cart).reduce((acc, rec) => {
-        if (rec !== action.id) {
-          return { ...acc, [rec]: state.cart[rec] }
+      const product = state.cart.find((item) => item.id === action.item.id)
+      const newAmount = product.count + action.payload
+      const updatedCart = state.cart.reduce((acc, rec) => {
+        if (rec.id !== action.item.id) {
+          return [...acc, rec]
         }
-        return { ...acc }
-      }, {})
+        return [...acc]
+      }, [])
       if (newAmount <= 0) {
         return {
           ...state,
-          cart: updatedCart,
+          cart: [...updatedCart],
           ...globalCountPrice(updatedCart)
         }
       }
       const updatedState = {
         ...state,
-        cart: {
+        cart: [
           ...state.cart,
-          [action.id]: {
-            ...state.cart[action.id],
+          {
+            ...action.item,
             count: newAmount
           }
-        }
+        ]
       }
       return {
         ...updatedState,
@@ -116,7 +114,7 @@ export function addToCart(item) {
   return { type: ADD_TO_CART, item }
 }
 
-export function updateAmount(id, change) {
+export function updateAmount(item, change) {
   let payload = 0
   if (change === '+') {
     payload = 1
@@ -126,7 +124,7 @@ export function updateAmount(id, change) {
   }
   return {
     type: UPDATE_AMOUNT,
-    id,
+    item,
     payload
   }
 }
