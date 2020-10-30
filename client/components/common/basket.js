@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import axios from 'axios'
 
 import Header from '../header'
 import { updateAmount } from '../../redux/reducers/basket'
@@ -11,6 +12,18 @@ const Basket = () => {
   const currency = useSelector((s) => s.goods.currency)
   const rate = useSelector((s) => s.goods.rates[s.goods.currency])
   const actualPrice = totalPrice * rate
+
+  useEffect(() => {
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        time: +new Date(),
+        action: `navigate to ${window.location.pathname} page`
+      }
+    }).catch((err) => console.log(err))
+    return () => {}
+  }, [])
   return (
     <div>
       <Header />

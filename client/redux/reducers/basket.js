@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 const ADD_TO_CART = 'ADD_TO_CART'
 const UPDATE_AMOUNT = 'UPDATE_AMOUNT'
 const SET_SORT = 'SET_SORT'
@@ -6,14 +8,6 @@ const initialState = {
   cart: [],
   totalPrice: 0,
   totalAmount: 0
-}
-
-const setCount = (product) => {
-  if (typeof product !== 'undefined') {
-    const count = product.count + 1
-    return count
-  }
-  return 1
 }
 
 const sumOfItems = (cart) => {
@@ -29,47 +23,40 @@ const globalCountPrice = (cart) => {
   return { totalAmount, totalPrice }
 }
 
+const setCount = (product, amount) => {
+  if (typeof product !== 'undefined') {
+    const count = product.count + amount
+    return count
+  }
+  return 1
+}
+
+const updateCart = (cart, item, payload = 1) => {
+  const itemInCart = cart.find((cartItem) => cartItem.id === item.id)
+  const newItem = {
+    ...(typeof itemInCart !== 'undefined' ? itemInCart : item),
+    count: setCount(itemInCart, payload)
+  }
+  const upCart = typeof itemInCart !== 'undefined' ? [...cart] : [...cart, newItem]
+  const newCart = upCart.map((cartItem) => (cartItem.id === item.id ? newItem : cartItem))
+  return newCart.filter((cartItem) => cartItem.count !== 0)
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
       return {
         ...state,
-        cart: [
-          ...state.cart,
-          {
-            ...action.item,
-            count: setCount(state.cart.find((item) => item.id === action.item.id))
-          }
-        ],
+        cart: updateCart(state.cart, action.item),
         totalPrice: state.totalPrice + action.item.price,
-        count: sumOfItems(state.cart) + 1
+        totalAmount: sumOfItems(state.cart) + 1
       }
     }
     case UPDATE_AMOUNT: {
-      const product = state.cart.find((item) => item.id === action.item.id)
-      const newAmount = product.count + action.payload
-      const updatedCart = state.cart.reduce((acc, rec) => {
-        if (rec.id !== action.item.id) {
-          return [...acc, rec]
-        }
-        return [...acc]
-      }, [])
-      if (newAmount <= 0) {
-        return {
-          ...state,
-          cart: [...updatedCart],
-          ...globalCountPrice(updatedCart)
-        }
-      }
+      const newCart = updateCart(state.cart, action.item, action.payload)
       const updatedState = {
         ...state,
-        cart: [
-          ...state.cart,
-          {
-            ...action.item,
-            count: newAmount
-          }
-        ]
+        cart: [...newCart]
       }
       return {
         ...updatedState,
@@ -111,16 +98,29 @@ export default (state = initialState, action) => {
 }
 
 export function addToCart(item) {
+  axios({
+    method: 'post',
+    url: '/api/v1/logs',
+    data: {
+      time: +new Date(),
+      action: `add ${item.title} to the backet`
+    }
+  }).catch((err) => console.log(err))
   return { type: ADD_TO_CART, item }
 }
 
 export function updateAmount(item, change) {
-  let payload = 0
-  if (change === '+') {
-    payload = 1
-  }
+  let payload = 1
   if (change === '-') {
     payload = -1
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        time: +new Date(),
+        action: `remove ${item.title} from the backet`
+      }
+    }).catch((err) => console.log(err))
   }
   return {
     type: UPDATE_AMOUNT,
@@ -130,6 +130,14 @@ export function updateAmount(item, change) {
 }
 
 export function setSortCart(name, sortType) {
+  axios({
+    method: 'post',
+    url: '/api/v1/logs',
+    data: {
+      time: +new Date(),
+      action: `sort by ${name}`
+    }
+  }).catch((err) => console.log(err))
   return {
     type: SET_SORT,
     sortType,

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import axios from 'axios'
 
 import Head from './head'
 import Header from './header'
@@ -12,6 +13,14 @@ const Main = () => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    axios({
+      method: 'post',
+      url: '/api/v1/logs',
+      data: {
+        time: +new Date(),
+        action: `navigate to ${window.location.pathname} page`
+      }
+    }).catch((err) => console.log(err))
     dispatch(getGoods())
     return () => {}
   }, [])

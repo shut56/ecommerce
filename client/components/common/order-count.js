@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
 const OrderCount = () => {
-  const { count, totalPrice } = useSelector((store) => store.basket)
+  const { totalAmount, totalPrice } = useSelector((store) => store.basket)
   const currency = useSelector((s) => s.goods.currency)
   const rate = useSelector((s) => s.goods.rates[s.goods.currency])
   const actualPrice = totalPrice * rate
@@ -31,7 +31,7 @@ const OrderCount = () => {
             />
           </svg>
           <span className="absolute top-0 left-0 rounded-full bg-indigo-500 text-white p-1 text-xs">
-            {count}
+            {totalAmount}
           </span>
         </Link>
       </div>

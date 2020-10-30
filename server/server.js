@@ -5,12 +5,26 @@ import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
+import axios from 'axios'
 
 import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-const { readFile } = require('fs').promises
+const { readFile, writeFile } = require('fs').promises
+
+const getLogs = () => {
+  return readFile(`${__dirname}/data/logs.json`, { encoding: 'utf8' })
+    .then((data) => JSON.parse(data))
+    .catch(async () => {
+      await writeFile(`${__dirname}/data/logs.json`, '[]', { encoding: 'utf8' })
+      return []
+    })
+}
+
+const setLogs = (logs = [], body = {}) => {
+  writeFile(`${__dirname}/data/logs.json`, JSON.stringify([body, ...logs]), { encoding: 'utf8' })
+}
 
 const Root = () => ''
 
@@ -34,6 +48,25 @@ server.get('/api/v1/goods', async (req, res) => {
     .then((f) => JSON.parse(f))
     .catch(() => ({ goods: 'no' }))
   res.json(readGoods)
+})
+
+server.get('/api/v1/rates', async (req, res) => {
+  const rates = await axios('https://api.exchangeratesapi.io/latest?base=USD').then(
+    ({ data }) => data.rates
+  )
+  res.json(rates)
+})
+
+server.get('/api/v1/logs', async (req, res) => {
+  const logs = await getLogs()
+  res.json(logs)
+})
+
+server.post('/api/v1/logs', async (req, res) => {
+  const logs = await getLogs()
+  await setLogs(logs, req.body)
+  res.send('Logs updated')
+  // res.json(req.body)
 })
 
 server.use('/api/', (req, res) => {

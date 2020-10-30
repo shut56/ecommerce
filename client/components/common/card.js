@@ -8,7 +8,7 @@ const Card = (props) => {
   const rate = useSelector((s) => s.goods.rates[s.goods.currency])
   const actualPrice = data.price * rate
   const dispatch = useDispatch()
-  const amount = useSelector((s) => s.basket.cart[data.id])
+  const product = useSelector((s) => s.basket.cart).find((item) => item.id === data.id)
   return (
     <div className="flex flex-col card max-w-xs rounded overflow-hidden shadow-lg">
       <img className="card__image w-full object-cover h-40" src={data.image} alt={data.title} />
@@ -19,7 +19,7 @@ const Card = (props) => {
           <div className="currency text-gray-700 text-base">{currency}</div>
         </div>
         <div className="card__product-amount text-gray-700 text-base">
-          in cart: {typeof amount === 'undefined' ? 0 : amount.count}
+          in cart: {typeof product === 'undefined' ? 0 : product.count}
         </div>
       </div>
       <div className="px-6 pt-4 pb-2">
