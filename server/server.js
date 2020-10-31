@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-const { readFile, writeFile } = require('fs').promises
+const { readFile, writeFile, unlink } = require('fs').promises
 
 const getLogs = () => {
   return readFile(`${__dirname}/data/logs.json`, { encoding: 'utf8' })
@@ -54,7 +54,17 @@ server.get('/api/v1/rates', async (req, res) => {
   const rates = await axios('https://api.exchangeratesapi.io/latest?base=USD').then(
     ({ data }) => data.rates
   )
-  res.json(rates)
+  const currencyData = await readFile(`${__dirname}/data/common-currency.json`, {
+    encoding: 'utf8'
+  })
+    .then((data) => JSON.parse(data))
+    .catch((err) => console.log(err))
+  const symbols = Object.keys(currencyData)
+    .filter((it) => Object.keys(rates).includes(it))
+    .reduce((acc, rec) => {
+      return { ...acc, [rec]: currencyData[rec].symbol_native }
+    }, {})
+  res.json({ rates, symbols })
 })
 
 server.get('/api/v1/logs', async (req, res) => {
@@ -66,7 +76,11 @@ server.post('/api/v1/logs', async (req, res) => {
   const logs = await getLogs()
   await setLogs(logs, req.body)
   res.send('Logs updated')
-  // res.json(req.body)
+})
+
+server.delete('/api/v1/logs', (req, res) => {
+  unlink(`${__dirname}/data/logs.json`)
+  res.send('Logs removed')
 })
 
 server.use('/api/', (req, res) => {
@@ -76,7 +90,7 @@ server.use('/api/', (req, res) => {
 
 const [htmlStart, htmlEnd] = Html({
   body: 'separator',
-  title: 'Skillcrucial - Become an IT HERO'
+  title: 'E-Shop Template'
 }).split('separator')
 
 server.get('/', (req, res) => {

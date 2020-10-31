@@ -10,7 +10,17 @@ const initialState = {
     USD: 1
   },
   currency: 'USD',
+  symbols: {
+    USD: '$'
+  },
   sortType: ''
+}
+
+const getImage = (products) => {
+  return products.map((item) => ({
+    ...item,
+    image: `https://source.unsplash.com/featured/?${/\w+(?=\s)/gi.exec(item.title)}`
+  }))
 }
 
 export default (state = initialState, action) => {
@@ -18,14 +28,15 @@ export default (state = initialState, action) => {
     case GET_GOODS: {
       return {
         ...state,
-        listOfGoods: action.data
+        listOfGoods: getImage(action.data)
       }
     }
     case SET_CURRENCY: {
       return {
         ...state,
         currency: action.data,
-        rates: action.rates
+        rates: action.rates,
+        symbols: action.symbols
       }
     }
     case SET_SORT: {
@@ -74,11 +85,12 @@ export function setCurrency(currency) {
   return (dispatch, getState) => {
     const store = getState()
     const { currency: oldCurrency } = store.goods
-    axios('/api/v1/rates').then(({ data: rates }) => {
+    axios('/api/v1/rates').then(({ data }) => {
       dispatch({
         type: SET_CURRENCY,
         data: currency.toUpperCase(),
-        rates
+        rates: data.rates,
+        symbols: data.symbols
       })
     })
     axios({

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
 import Header from '../header'
+import Footer from '../footer'
 import { updateAmount } from '../../redux/reducers/basket'
 
 const Basket = () => {
@@ -80,6 +81,7 @@ const Basket = () => {
       <div id="total-price">
         Total price: {actualPrice.toFixed(2)} {currency}
       </div>
+      <Footer />
     </div>
   )
 }

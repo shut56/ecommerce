@@ -4,6 +4,7 @@ import axios from 'axios'
 
 import Head from './head'
 import Header from './header'
+import Footer from './footer'
 import Card from './common/card'
 
 import { getGoods } from '../redux/reducers/goods'
@@ -22,21 +23,22 @@ const Main = () => {
       }
     }).catch((err) => console.log(err))
     dispatch(getGoods())
-    return () => {}
+    return () => { }
   }, [])
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <Head title="Hello" />
       <Header />
-      <div className="flex flex-wrap">
+      <div className="flex flex-wrap justify-evenly w-11/12">
         {listOfGoods.map((item) => {
           return (
-            <div key={item.id} className="m-2">
+            <div key={item.id} className="flex-auto max-w-xs m-2">
               <Card data={item} />
             </div>
           )
         })}
       </div>
+      <Footer />
     </div>
   )
 }

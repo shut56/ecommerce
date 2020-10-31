@@ -18,15 +18,15 @@ const Sort = () => {
     }
   }
   return (
-    <div>
-      <div>sort by</div>
+    <div className="flex flex-row">
+      <div className="mr-2">sort by</div>
       <button
         id="sort-price"
         type="button"
         className="mt-2 px-3 mx-2 py-2 bg-blue-500 t rounded-lg text-white"
         onClick={onClick('price')}
       >
-        price {activeSort === 'price' && sortMethod}
+        Price {activeSort === 'price' && sortMethod}
       </button>
       <button
         id="sort-name"
@@ -34,7 +34,7 @@ const Sort = () => {
         className="mt-2 px-3 mx-2 py-2 bg-blue-500 t rounded-lg text-white"
         onClick={onClick('abc')}
       >
-        alphabet {activeSort === 'abc' && sortMethod}
+        ABC {activeSort === 'abc' && sortMethod}
       </button>
     </div>
   )

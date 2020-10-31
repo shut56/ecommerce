@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
+import Footer from '../footer'
 import { getLogs } from '../../redux/reducers/logs'
 
 const Logs = () => {
@@ -28,18 +29,21 @@ const Logs = () => {
           <div className="px-2">{logs.length}</div>
         </div>
       </div>
-      <div className="flex justify-center">
-        <div className="flex flex-col border-2 border-gray-400 rounded-lg max-w-screen-lg">
-          {logs.map((logString) => {
+      <div className="flex justify-center my-2">
+        <div className="flex flex-col border-2 border-gray-400 rounded-lg max-w-screen-lg shadow-md">
+          {logs.map((logString, index, array) => {
+            const topLog = index === 0 ? ' rounded-t-lg' : ''
+            const botLog = index === array.length - 1 ? ' rounded-b-lg' : ''
             return (
-              <div key={logString.time} className="py-2">
-                <div className="bg-gray-200 px-4">{Date(logString.time)}</div>
-                <div className="bg-gray-100 px-4">{logString.action}</div>
+              <div key={logString.time} >
+                <div className={`bg-gray-200 py-2 px-4${topLog}`}>{Date(logString.time)}</div>
+                <div className={`bg-gray-100 py-2 px-4${botLog}`}>{logString.action}</div>
               </div>
             )
           })}
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

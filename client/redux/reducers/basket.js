@@ -3,6 +3,7 @@ import axios from 'axios'
 const ADD_TO_CART = 'ADD_TO_CART'
 const UPDATE_AMOUNT = 'UPDATE_AMOUNT'
 const SET_SORT = 'SET_SORT'
+const SAVE_CART = 'SAVE_CART'
 
 const initialState = {
   cart: [],
@@ -92,6 +93,12 @@ export default (state = initialState, action) => {
         cart: sortedList
       }
     }
+    case SAVE_CART: {
+      return {
+        ...state,
+        ...JSON.parse(action.cart)
+      }
+    }
     default:
       return state
   }
@@ -142,5 +149,12 @@ export function setSortCart(name, sortType) {
     type: SET_SORT,
     sortType,
     name
+  }
+}
+
+export function saveCart(cart) {
+  return {
+    type: SAVE_CART,
+    cart
   }
 }
