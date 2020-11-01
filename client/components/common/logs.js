@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
+import Head from '../head'
 import Footer from '../footer'
 import { getLogs } from '../../redux/reducers/logs'
 
@@ -22,6 +23,7 @@ const Logs = () => {
   }, [])
   return (
     <div className="flex flex-col">
+      <Head title="Logs" />
       <div className="flex bg-indigo-800 justify-around p-2 text-white font-bold">
         <div>Logs</div>
         <div className="flex">

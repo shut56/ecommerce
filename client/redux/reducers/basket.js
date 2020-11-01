@@ -43,6 +43,17 @@ const updateCart = (cart, item, payload = 1) => {
   return newCart.filter((cartItem) => cartItem.count !== 0)
 }
 
+const getOldCart = (cart) => {
+  let oldCart
+  try {
+    oldCart = JSON.parse(cart)
+  } catch (error) {
+    oldCart = {}
+    console.log(error.name)
+  }
+  return oldCart
+}
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_TO_CART: {
@@ -96,7 +107,7 @@ export default (state = initialState, action) => {
     case SAVE_CART: {
       return {
         ...state,
-        ...JSON.parse(action.cart)
+        ...getOldCart(action.cart)
       }
     }
     default:

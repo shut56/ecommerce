@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
 
+import Head from '../head'
 import Header from '../header'
 import Footer from '../footer'
 import { updateAmount } from '../../redux/reducers/basket'
@@ -27,22 +28,22 @@ const Basket = () => {
   }, [])
   return (
     <div>
+      <Head title="Cart" />
       <Header />
-      <div>Dis is basket</div>
-      <div className="flex justify-center">
-        <div className="flex flex-col border">
-          <div className="font-bold flex flex-row justify-around border">
-            <div className="w-1/10 mx-4">#</div>
-            <div className="w-1/10 mx-4">Image</div>
-            <div className="w-5/10 mx-4">Title</div>
-            <div className="w-1/10 mx-4">Price</div>
-            <div className="w-1/10 mx-4">Amount</div>
-            <div className="w-1/10 mx-4">Total</div>
+      <div className="flex w-11/12">
+        <div className="flex flex-col justify-center">
+          <div className="grid grid-cols-6 items-center bg-gray-200 border">
+            <div>#</div>
+            <div>Image</div>
+            <div>Title</div>
+            <div>Price</div>
+            <div>Amount</div>
+            <div>Total</div>
           </div>
           {cartItems.map((item, index) => {
             return (
-              <div className="flex flex-row border" key={item.id}>
-                <div className="w-1/10 mx-4 px-4">{index + 1}</div>
+              <div className="grid grid-cols-6 items-center border" key={item.id}>
+                <div className="w-6 mx-4 px-4">{index + 1}</div>
                 <img
                   className="product__image object-cover h-12 w-1/10 mx-4 px-4"
                   src={item.image}
@@ -52,17 +53,17 @@ const Basket = () => {
                 <div className="product__price w-1/10 mx-4 px-4">
                   {(item.price * rate).toFixed(2)} {currency}
                 </div>
-                <div className="product__amount flex flex-row w-1/10 mx-4 px-4">
+                <div className="product__amount flex flex-row justify-between font-bold w-1/10 m-2 border rounded-lg border-gray-300">
                   <button
-                    className="m-2 product__remove"
+                    className="product__remove px-2 border-r bg-gray-200 border-gray-300"
                     type="button"
                     onClick={() => dispatch(updateAmount(item, '-'))}
                   >
                     -
                   </button>
-                  <div className="m-2">{typeof item === 'undefined' ? 0 : item.count}</div>
+                  <div className="w-8 text-center">{typeof item === 'undefined' ? 0 : item.count}</div>
                   <button
-                    className="m-2"
+                    className="product__add px-2 border-l bg-gray-200 border-gray-300"
                     type="button"
                     onClick={() => dispatch(updateAmount(item, '+'))}
                   >

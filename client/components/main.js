@@ -23,11 +23,11 @@ const Main = () => {
       }
     }).catch((err) => console.log(err))
     dispatch(getGoods())
-    return () => { }
+    return () => {}
   }, [])
   return (
     <div className="flex flex-col items-center">
-      <Head title="Hello" />
+      <Head title="Main" />
       <Header />
       <div className="flex flex-wrap justify-evenly w-11/12">
         {listOfGoods.map((item) => {
