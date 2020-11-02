@@ -87,7 +87,13 @@ const Basket = () => {
             </tbody>
           </table>
           <div className="flex flex-col items-center">
-            <button type="button" className="py-2 w-40 rounded-full bg-gray-200" onClick={() => dispatch(clearCart())}>Clear</button>
+            <button
+              type="button"
+              className="py-2 w-40 rounded-full bg-gray-200"
+              onClick={() => dispatch(clearCart())}
+            >
+              Clear
+            </button>
             <div className="font-bold">Total</div>
             <div id="total-amount">Total amount: {totalAmount}</div>
             <div id="total-price">
