@@ -27,8 +27,8 @@ const Card = (props) => {
         >
           Add to cart +
         </button>
-        <div className="card__product-amount text-gray-700 text-base">
-          {typeof product === 'undefined' ? '' : `in cart: ${product.count}`}
+        <div className="card__product-amount text-gray-700 text-base w-16">
+          {typeof product === 'undefined' ? '' : `${product.count} in cart`}
         </div>
       </div>
     </div>

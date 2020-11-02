@@ -56,9 +56,7 @@ server.get('/api/v1/rates', async (req, res) => {
   )
   const currencyData = await readFile(`${__dirname}/data/common-currency.json`, {
     encoding: 'utf8'
-  })
-    .then((data) => JSON.parse(data))
-    .catch((err) => console.log(err))
+  }).then((data) => JSON.parse(data))
   const symbols = Object.keys(currencyData)
     .filter((it) => Object.keys(rates).includes(it))
     .reduce((acc, rec) => {

@@ -4,6 +4,7 @@ const ADD_TO_CART = 'ADD_TO_CART'
 const UPDATE_AMOUNT = 'UPDATE_AMOUNT'
 const SET_SORT = 'SET_SORT'
 const SAVE_CART = 'SAVE_CART'
+const CLEAR_CART = 'CLEAR_CART'
 
 const initialState = {
   cart: [],
@@ -49,7 +50,6 @@ const getOldCart = (cart) => {
     oldCart = JSON.parse(cart)
   } catch (error) {
     oldCart = {}
-    console.log(error.name)
   }
   return oldCart
 }
@@ -110,6 +110,11 @@ export default (state = initialState, action) => {
         ...getOldCart(action.cart)
       }
     }
+    case CLEAR_CART: {
+      return {
+        ...initialState
+      }
+    }
     default:
       return state
   }
@@ -123,7 +128,7 @@ export function addToCart(item) {
       time: +new Date(),
       action: `add ${item.title} to the backet`
     }
-  }).catch((err) => console.log(err))
+  })
   return { type: ADD_TO_CART, item }
 }
 
@@ -138,7 +143,7 @@ export function updateAmount(item, change) {
         time: +new Date(),
         action: `remove ${item.title} from the backet`
       }
-    }).catch((err) => console.log(err))
+    })
   }
   return {
     type: UPDATE_AMOUNT,
@@ -155,7 +160,7 @@ export function setSortCart(name, sortType) {
       time: +new Date(),
       action: `sort by ${name}`
     }
-  }).catch((err) => console.log(err))
+  })
   return {
     type: SET_SORT,
     sortType,
@@ -167,5 +172,11 @@ export function saveCart(cart) {
   return {
     type: SAVE_CART,
     cart
+  }
+}
+
+export function clearCart() {
+  return {
+    type: CLEAR_CART
   }
 }

@@ -18,9 +18,9 @@ const Logs = () => {
         time: +new Date(),
         action: `navigate to ${window.location.pathname} page`
       }
-    }).catch((err) => console.log(err))
+    })
     return () => {}
-  }, [])
+  }, [dispatch])
   return (
     <div className="flex flex-col">
       <Head title="Logs" />
@@ -37,7 +37,7 @@ const Logs = () => {
             const topLog = index === 0 ? ' rounded-t-lg' : ''
             const botLog = index === array.length - 1 ? ' rounded-b-lg' : ''
             return (
-              <div key={logString.time} >
+              <div key={logString.time}>
                 <div className={`bg-gray-200 py-2 px-4${topLog}`}>{Date(logString.time)}</div>
                 <div className={`bg-gray-100 py-2 px-4${botLog}`}>{logString.action}</div>
               </div>

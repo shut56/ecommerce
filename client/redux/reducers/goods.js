@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const GET_GOODS = 'GET_GOODS'
 const SET_CURRENCY = 'SET_CURRENCY'
+const GET_CURRENCY = 'GET_CURRENCY'
 const SET_SORT = 'SET_SORT'
 
 const initialState = {
@@ -13,13 +14,14 @@ const initialState = {
   symbols: {
     USD: '$'
   },
-  sortType: ''
+  sortType: '',
+  currencyTimeOut: 0
 }
 
 const getImage = (products) => {
   return products.map((item) => ({
     ...item,
-    image: `https://source.unsplash.com/featured/?${/\w+(?=\s)/gi.exec(item.title)}`
+    image: `https://source.unsplash.com/800x600/?${/\w+(?=\s)/gi.exec(item.title)}`
   }))
 }
 
@@ -35,8 +37,15 @@ export default (state = initialState, action) => {
       return {
         ...state,
         currency: action.data,
-        rates: action.rates,
-        symbols: action.symbols
+        rates: action.rates || state.rates,
+        symbols: action.symbols || state.symbols,
+        currencyTimeOut: +new Date()
+      }
+    }
+    case GET_CURRENCY: {
+      return {
+        ...state,
+        currency: action.data
       }
     }
     case SET_SORT: {
@@ -84,15 +93,25 @@ export function getGoods() {
 export function setCurrency(currency) {
   return (dispatch, getState) => {
     const store = getState()
-    const { currency: oldCurrency } = store.goods
-    axios('/api/v1/rates').then(({ data }) => {
-      dispatch({
-        type: SET_CURRENCY,
-        data: currency.toUpperCase(),
-        rates: data.rates,
-        symbols: data.symbols
+    const { currency: oldCurrency, currencyTimeOut } = store.goods
+
+    const time = +new Date()
+    if (currencyTimeOut + 6 * 60 * 60 * 1000 < time) {
+      axios('/api/v1/rates').then(({ data }) => {
+        dispatch({
+          type: SET_CURRENCY,
+          data: currency.toUpperCase(),
+          rates: data.rates,
+          symbols: data.symbols
+        })
       })
-    })
+    } else {
+      dispatch({
+        type: GET_CURRENCY,
+        data: currency.toUpperCase()
+      })
+    }
+
     axios({
       method: 'post',
       url: '/api/v1/logs',
@@ -100,7 +119,7 @@ export function setCurrency(currency) {
         time: +new Date(),
         action: `change currency from ${oldCurrency} to ${currency}`
       }
-    }).catch((err) => console.log(err))
+    })
   }
 }
 

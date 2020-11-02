@@ -12,11 +12,14 @@ import OrderCount from './common/order-count'
 const Header = () => {
   const basket = useSelector((s) => s.basket)
   const dispatch = useDispatch()
-  console.log(dispatch)
   useEffect(() => {
-    // dispatch(saveCart(localStorage.getItem('cart')))
-    return () => {}
-  }, [])
+    // if (basket.totalAmount <= 0) {
+    //   dispatch(saveCart(localStorage.getItem('cart')))
+    // }
+    return () => {
+      // localStorage.setItem('cart', JSON.stringify(basket))
+    }
+  }, [dispatch, basket])
   return (
     <div className="w-full">
       {useBeforeunload(() => localStorage.setItem('cart', JSON.stringify(basket)))}
@@ -26,9 +29,7 @@ const Header = () => {
             <div>
               <img src="images/pepe-smile.png" width="80" alt="frog" />
             </div>
-            <div className="ml-4">
-              Pepe&apos;s Shop
-            </div>
+            <div className="ml-4">Pepe&apos;s Shop</div>
           </Link>
         </div>
       </div>
@@ -41,4 +42,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default React.memo(Header)

@@ -10,7 +10,7 @@ import Card from './common/card'
 import { getGoods } from '../redux/reducers/goods'
 
 const Main = () => {
-  const listOfGoods = useSelector((store) => store.goods.listOfGoods.slice(0, 10))
+  const listOfGoods = useSelector((store) => store.goods.listOfGoods.slice(0, 20))
   const dispatch = useDispatch()
 
   useEffect(() => {
@@ -21,10 +21,10 @@ const Main = () => {
         time: +new Date(),
         action: `navigate to ${window.location.pathname} page`
       }
-    }).catch((err) => console.log(err))
+    })
     dispatch(getGoods())
     return () => {}
-  }, [])
+  }, [dispatch])
   return (
     <div className="flex flex-col items-center">
       <Head title="Main" />
