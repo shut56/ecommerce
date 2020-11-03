@@ -3,7 +3,7 @@ import axios from 'axios'
 const ADD_TO_CART = 'ADD_TO_CART'
 const UPDATE_AMOUNT = 'UPDATE_AMOUNT'
 const SET_SORT = 'SET_SORT'
-const SAVE_CART = 'SAVE_CART'
+const SAVED_CART = 'SAVED_CART'
 const CLEAR_CART = 'CLEAR_CART'
 
 const initialState = {
@@ -44,7 +44,7 @@ const updateCart = (cart, item, payload = 1) => {
   return newCart.filter((cartItem) => cartItem.count !== 0)
 }
 
-const getOldCart = (cart) => {
+const parseOldCart = (cart) => {
   let oldCart
   try {
     oldCart = JSON.parse(cart)
@@ -104,10 +104,10 @@ export default (state = initialState, action) => {
         cart: sortedList
       }
     }
-    case SAVE_CART: {
+    case SAVED_CART: {
       return {
         ...state,
-        ...getOldCart(action.cart)
+        ...parseOldCart(action.cart)
       }
     }
     case CLEAR_CART: {
@@ -168,9 +168,9 @@ export function setSortCart(name, sortType) {
   }
 }
 
-export function saveCart(cart) {
+export function getOldCart(cart) {
   return {
-    type: SAVE_CART,
+    type: SAVED_CART,
     cart
   }
 }

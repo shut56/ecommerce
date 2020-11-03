@@ -15,6 +15,7 @@ const initialState = {
     USD: '$'
   },
   sortType: '',
+  goodsTimeout: 0,
   currencyTimeOut: 0
 }
 
@@ -30,15 +31,16 @@ export default (state = initialState, action) => {
     case GET_GOODS: {
       return {
         ...state,
-        listOfGoods: getImage(action.data)
+        listOfGoods: getImage(action.data),
+        goodsTimeout: +new Date()
       }
     }
     case SET_CURRENCY: {
       return {
         ...state,
         currency: action.data,
-        rates: action.rates || state.rates,
-        symbols: action.symbols || state.symbols,
+        rates: action.rates,
+        symbols: action.symbols,
         currencyTimeOut: +new Date()
       }
     }
@@ -83,10 +85,16 @@ export default (state = initialState, action) => {
 }
 
 export function getGoods() {
-  return (dispatch) => {
-    axios('/api/v1/goods').then(({ data }) => {
-      dispatch({ type: GET_GOODS, data })
-    })
+  return (dispatch, getState) => {
+    const store = getState()
+    const { goodsTimeout } = store.goods
+    const time = +new Date()
+
+    if (goodsTimeout + 15 * 60 * 1000 < time) {
+      axios('/api/v1/goods').then(({ data }) => {
+        dispatch({ type: GET_GOODS, data })
+      })
+    }
   }
 }
 
@@ -94,8 +102,8 @@ export function setCurrency(currency) {
   return (dispatch, getState) => {
     const store = getState()
     const { currency: oldCurrency, currencyTimeOut } = store.goods
-
     const time = +new Date()
+
     if (currencyTimeOut + 6 * 60 * 60 * 1000 < time) {
       axios('/api/v1/rates').then(({ data }) => {
         dispatch({

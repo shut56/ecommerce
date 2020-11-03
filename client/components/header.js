@@ -1,25 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useBeforeunload } from 'react-beforeunload'
 
 import Currency from './common/currency'
 import Sort from './common/sort'
 import OrderCount from './common/order-count'
 
-// import { saveCart } from '../redux/reducers/basket'
-
 const Header = () => {
   const basket = useSelector((s) => s.basket)
-  const dispatch = useDispatch()
-  useEffect(() => {
-    // if (basket.totalAmount <= 0) {
-    //   dispatch(saveCart(localStorage.getItem('cart')))
-    // }
-    return () => {
-      // localStorage.setItem('cart', JSON.stringify(basket))
-    }
-  }, [dispatch, basket])
   return (
     <div className="w-full">
       {useBeforeunload(() => localStorage.setItem('cart', JSON.stringify(basket)))}
