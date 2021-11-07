@@ -51,9 +51,9 @@ server.get('/api/v1/goods', async (req, res) => {
 })
 
 server.get('/api/v1/rates', async (req, res) => {
-  const rates = await axios('https://api.exchangeratesapi.io/latest?base=USD').then(
-    ({ data }) => data.rates
-  )
+  const rates = await axios(
+    'https://api.exchangerate.host/latest?base=USD&symbols=USD,EUR,CAD'
+  ).then(({ data }) => data.rates)
   const currencyData = await readFile(`${__dirname}/data/common-currency.json`, {
     encoding: 'utf8'
   }).then((data) => JSON.parse(data))
